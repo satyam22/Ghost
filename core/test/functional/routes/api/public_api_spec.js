@@ -7,37 +7,19 @@ var should = require('should'),
     request;
 
 describe('Public API', function () {
-    var publicAPIaccessSetting = {
-        settings: [
-            {key: 'labs', value: {publicAPI: true}}
-        ]
-    }, ghostServer;
+    var ghostServer;
 
-    before(function (done) {
+    before(function () {
         // starting ghost automatically populates the db
         // TODO: prevent db init, and manage bringing up the DB with fixtures ourselves
-        ghost().then(function (_ghostServer) {
+        return ghost().then(function (_ghostServer) {
             ghostServer = _ghostServer;
             return ghostServer.start();
         }).then(function () {
             request = supertest.agent(config.get('url'));
         }).then(function () {
             return testUtils.doAuth(request, 'posts', 'tags', 'client:trusted-domain');
-        }).then(function (token) {
-            // enable public API
-            request.put(testUtils.API.getApiQuery('settings/'))
-                .set('Authorization', 'Bearer ' + token)
-                .send(publicAPIaccessSetting)
-                .expect('Content-Type', /json/)
-                .expect('Cache-Control', testUtils.cacheRules.private)
-                .expect(200)
-                .end(function (err) {
-                    if (err) {
-                        return done(err);
-                    }
-                    done();
-                });
-        }).catch(done);
+        });
     });
 
     after(function () {
@@ -65,7 +47,7 @@ describe('Public API', function () {
                 var jsonResponse = res.body;
                 should.exist(jsonResponse.posts);
                 testUtils.API.checkResponse(jsonResponse, 'posts');
-                jsonResponse.posts.should.have.length(5);
+                jsonResponse.posts.should.have.length(11);
                 testUtils.API.checkResponse(jsonResponse.posts[0], 'post');
                 testUtils.API.checkResponse(jsonResponse.meta.pagination, 'pagination');
                 _.isBoolean(jsonResponse.posts[0].featured).should.eql(true);
@@ -92,7 +74,7 @@ describe('Public API', function () {
                 var jsonResponse = res.body;
                 should.exist(jsonResponse.posts);
                 testUtils.API.checkResponse(jsonResponse, 'posts');
-                jsonResponse.posts.should.have.length(5);
+                jsonResponse.posts.should.have.length(11);
                 testUtils.API.checkResponse(jsonResponse.posts[0], 'post');
                 testUtils.API.checkResponse(jsonResponse.meta.pagination, 'pagination');
                 _.isBoolean(jsonResponse.posts[0].featured).should.eql(true);
@@ -116,7 +98,7 @@ describe('Public API', function () {
                 var jsonResponse = res.body;
                 should.exist(jsonResponse.posts);
                 testUtils.API.checkResponse(jsonResponse, 'posts');
-                jsonResponse.posts.should.have.length(5);
+                jsonResponse.posts.should.have.length(11);
                 testUtils.API.checkResponse(jsonResponse.posts[0], 'post');
                 testUtils.API.checkResponse(jsonResponse.meta.pagination, 'pagination');
                 _.isBoolean(jsonResponse.posts[0].featured).should.eql(true);
@@ -206,7 +188,7 @@ describe('Public API', function () {
                 var jsonResponse = res.body;
                 should.exist(jsonResponse);
                 should.exist(jsonResponse.errors);
-                testUtils.API.checkResponseValue(jsonResponse.errors[0], ['message', 'errorType']);
+                testUtils.API.checkResponseValue(jsonResponse.errors[0], ['message', 'errorType', 'context']);
                 done();
             });
     });
@@ -227,7 +209,7 @@ describe('Public API', function () {
                 var jsonResponse = res.body;
                 should.exist(jsonResponse);
                 should.exist(jsonResponse.errors);
-                testUtils.API.checkResponseValue(jsonResponse.errors[0], ['message', 'errorType']);
+                testUtils.API.checkResponseValue(jsonResponse.errors[0], ['message', 'errorType', 'context']);
                 done();
             });
     });

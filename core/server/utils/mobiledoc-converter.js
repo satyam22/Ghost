@@ -15,7 +15,7 @@ var SimpleDom   = require('simple-dom'),
     };
 
 // function getCards() {
-//     return config.get('internalApps').reduce(
+//     return config.get('apps:internal').reduce(
 //         function (cards, appName) {
 //             var app = require(path.join(config.get('paths').internalAppPath, appName));
 //             if (app.hasOwnProperty('cards')) {
@@ -25,7 +25,7 @@ var SimpleDom   = require('simple-dom'),
 //     }, [ ]);
 // }
 // function getAtoms() {
-//     return config.get('internalApps').reduce(
+//     return config.get('apps:internal').reduce(
 //         function (atoms, appName) {
 //             var app = require(path.join(config.get('paths').internalAppPath, appName));
 //             if (app.hasOwnProperty('atoms')) {
@@ -39,7 +39,7 @@ module.exports = {
     render: function (mobiledoc) {
         var renderer = new Renderer(options),
         rendered = renderer.render(mobiledoc),
-        serializer = new SimpleDom.HTMLSerializer([]),
+        serializer = new SimpleDom.HTMLSerializer(SimpleDom.voidMap),
         html = serializer.serializeChildren(rendered.result);
         return html;
     }

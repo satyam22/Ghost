@@ -1,8 +1,8 @@
 language: node_js
 # When changing node version also update it on lines 34, 36 and 46.
 node_js:
-  - "4"
   - "6"
+  - "4"
 
 sudo: false
 
@@ -21,14 +21,13 @@ addons:
 env:
   global:
     - GITHUB_OAUTH_KEY=003a44d58f12089d0c0261338298af3813330949
-    - GHOST_NODE_VERSION_CHECK=false
   matrix:
     - DB=sqlite3 NODE_ENV=testing
     - DB=mysql NODE_ENV=testing-mysql
 
 matrix:
   include:
-    - node_js: "4"
+    - node_js: "6"
       env: TEST_SUITE=lint
   fast_finish: true
 
@@ -45,21 +44,8 @@ install:
 
 after_success:
   - |
-      if [ "$DB" != "sqlite3" ] || [ "$TRAVIS_NODE_VERSION" != "4" ] || [[ "$TRAVIS_PULL_REQUEST_BRANCH" != *"greenkeeper"* ]]; then
-        exit 0
-      fi
-      git clone -b "$TRAVIS_PULL_REQUEST_BRANCH" "https://"$PUSH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG".git" repo && cd repo
-      git log --name-status HEAD^..HEAD | grep "update" || exit 0
-      yarn
-      git config --global user.email "github@ghost.org"
-      git config --global user.name "TryGhost-Travis"
-      git config --global push.default simple
-      git add yarn.lock
-      git commit -m "chore: yarn.lock"
-      git push
-  - |
       if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-        if [[ "$DB" = "sqlite3" && "$TRAVIS_NODE_VERSION" = "4" ]]; then
+        if [[ "$DB" = "sqlite3" && "$TRAVIS_NODE_VERSION" = "6" ]]; then
           echo "Generate coverage..."
           grunt coverage
           npm install -g codeclimate-test-reporter

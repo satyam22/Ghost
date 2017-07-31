@@ -238,8 +238,16 @@ fixtures = {
         }
 
         return db.knex('users')
-            .where('id', '=', models.User.ownerUser)
+            .where('id', '=', DataGenerator.Content.users[0].id)
             .update(user);
+    },
+
+    changeOwnerUserStatus: function changeOwnerUserStatus(options) {
+        return db.knex('users')
+            .where('slug', '=', options.slug)
+            .update({
+                status: options.status
+            });
     },
 
     createUsersWithRoles: function createUsersWithRoles() {
@@ -285,6 +293,16 @@ fixtures = {
         });
     },
 
+    insertOneUser: function insertOneUser(options) {
+        options = options || {};
+
+        return db.knex('users').insert(DataGenerator.forKnex.createUser({
+            email: options.email,
+            slug: options.slug,
+            status: options.status
+        }));
+    },
+
     // Creates a client, and access and refresh tokens for user with index or 2 by default
     createTokensForUser: function createTokensForUser(index) {
         return db.knex('clients').insert(DataGenerator.forKnex.clients).then(function () {
@@ -313,12 +331,15 @@ fixtures = {
         return path.resolve(__dirname + '/fixtures/import/' + filename);
     },
 
-    getExportFixturePath: function (filename) {
-        return path.resolve(__dirname + '/fixtures/export/' + filename + '.json');
+    getExportFixturePath: function (filename, options) {
+        options = options || {lts: false};
+        var relativePath = options.lts ? '/fixtures/export/lts/' : '/fixtures/export/';
+        return path.resolve(__dirname + relativePath + filename + '.json');
     },
 
-    loadExportFixture: function loadExportFixture(filename) {
-        var filePath = this.getExportFixturePath(filename),
+    loadExportFixture: function loadExportFixture(filename, options) {
+        options = options || {lts: false};
+        var filePath = this.getExportFixturePath(filename, options),
             readFile = Promise.promisify(fs.readFile);
 
         return readFile(filePath).then(function (fileContents) {

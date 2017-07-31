@@ -3,7 +3,7 @@ var debug = require('debug')('ghost:blog'),
 
     // App requires
     config = require('../config'),
-    storage = require('../storage'),
+    storage = require('../adapters/storage'),
     utils = require('../utils'),
 
     // This should probably be an internal app
@@ -43,13 +43,11 @@ module.exports = function setupBlogApp() {
     // @TODO make sure all of these have a local 404 error handler
     // Favicon
     blogApp.use(serveFavicon());
-    // Ghost-Url
-    blogApp.use(servePublicFile('public/ghost-url.js', 'application/javascript', utils.ONE_HOUR_S));
-    blogApp.use(servePublicFile('public/ghost-url.min.js', 'application/javascript', utils.ONE_HOUR_S));
+    // /public/ghost-sdk.js
+    blogApp.use(servePublicFile('public/ghost-sdk.js', 'application/javascript', utils.ONE_HOUR_S));
+    blogApp.use(servePublicFile('public/ghost-sdk.min.js', 'application/javascript', utils.ONE_HOUR_S));
     // Serve sitemap.xsl file
     blogApp.use(servePublicFile('sitemap.xsl', 'text/xsl', utils.ONE_DAY_S));
-    // Serve robots.txt if not found in theme
-    blogApp.use(servePublicFile('robots.txt', 'text/plain', utils.ONE_HOUR_S));
 
     // Serve stylesheets for default templates
     blogApp.use(servePublicFile('public/ghost.css', 'text/css', utils.ONE_HOUR_S));
@@ -80,9 +78,12 @@ module.exports = function setupBlogApp() {
     blogApp.use(staticTheme());
     debug('Static content done');
 
+    // Serve robots.txt if not found in theme
+    blogApp.use(servePublicFile('robots.txt', 'text/plain', utils.ONE_HOUR_S));
+
     // setup middleware for internal apps
     // @TODO: refactor this to be a proper app middleware hook for internal & external apps
-    config.get('internalApps').forEach(function (appName) {
+    config.get('apps:internal').forEach(function (appName) {
         var app = require(path.join(config.get('paths').internalAppPath, appName));
         if (app.hasOwnProperty('setupMiddleware')) {
             app.setupMiddleware(blogApp);

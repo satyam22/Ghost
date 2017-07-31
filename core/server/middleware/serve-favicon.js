@@ -1,8 +1,9 @@
 var fs = require('fs'),
     path = require('path'),
     crypto = require('crypto'),
-    storage = require('../storage'),
+    storage = require('../adapters/storage'),
     utils  = require('../utils'),
+    config  = require('../config'),
     settingsCache = require('../settings/cache'),
     blogIconUtils = require('../utils/blog-icon'),
     buildContentResponse,
@@ -14,7 +15,7 @@ buildContentResponse = function buildContentResponse(ext, buf) {
             'Content-Type': 'image/' + ext,
             'Content-Length': buf.length,
             ETag: '"' + crypto.createHash('md5').update(buf, 'utf8').digest('hex') + '"',
-            'Cache-Control': 'public, max-age=' + utils.ONE_DAY_S
+            'Cache-Control': 'public, max-age=' + config.get('caching:favicon:maxAge')
         },
         body: buf
     };

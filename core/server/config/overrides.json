@@ -7,17 +7,19 @@
         "adminViews": "core/server/admin/views/",
         "defaultViews": "core/server/views/",
         "internalAppPath": "core/server/apps/",
-        "internalStoragePath": "core/server/storage/",
-        "internalSchedulingPath": "core/server/scheduling/",
+        "internalStoragePath": "core/server/adapters/storage/",
+        "internalSchedulingPath": "core/server/adapters/scheduling/",
         "migrationPath": "core/server/data/migrations",
         "publicFilePath": "core/server/public"
     },
-    "internalApps": [
-        "private-blogging",
-        "subscribers",
-        "amp",
-        "default-cards"
-    ],
+    "apps": {
+        "internal": [
+            "private-blogging",
+            "subscribers",
+            "amp",
+            "default-cards"
+        ]
+    },
     "routeKeywords": {
         "tag": "tag",
         "author": "author",
@@ -25,7 +27,8 @@
         "preview": "p",
         "private": "private",
         "subscribe": "subscribe",
-        "amp": "amp"
+        "amp": "amp",
+        "primaryTagFallback": "all"
     },
     "slugs": {
         "reserved": ["admin", "app", "apps", "archive", "archives", "categories",

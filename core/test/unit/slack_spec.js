@@ -264,13 +264,13 @@ describe('Slack', function () {
             }).catch(done);
         });
 
-        it('does not send webhook for \'welcome-to-ghost\' post', function (done) {
+        it('does not send webhook for \'welcome\' post', function (done) {
             // set up
             isPostStub.returns(true);
             settingsObj.settings[0] = slackObjWithUrl;
 
             // execute code
-            ping({slug: 'welcome-to-ghost'}).then(function (result) {
+            ping({slug: 'welcome'}).then(function (result) {
                 // assertions
                 isPostStub.calledOnce.should.be.true();
                 urlForSpy.calledOnce.should.be.true();
@@ -293,6 +293,16 @@ describe('Slack', function () {
                 makeRequestSpy.called.should.be.false();
                 done();
             });
+        });
+
+        it('do not ping if content is imported', function (done) {
+            ping({}, {importing: true}).then(function () {
+                isPostStub.called.should.be.false();
+                urlForSpy.called.should.be.false();
+                settingsAPIStub.called.should.be.false();
+                makeRequestSpy.called.should.be.false();
+                done();
+            }).catch(done);
         });
     });
 });

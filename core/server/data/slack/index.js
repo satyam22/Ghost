@@ -9,7 +9,6 @@ var https           = require('https'),
     api             = require('../../api/settings'),
     i18n            = require('../../i18n'),
     schema          = require('../schema').checks,
-    options,
     req,
     slackData = {};
 
@@ -37,15 +36,22 @@ function makeRequest(reqOptions, reqPayload) {
         logging.error(new errors.GhostError({
             err: err,
             context: i18n.t('errors.data.xml.xmlrpc.pingUpdateFailed.error'),
-            help: i18n.t('errors.data.xml.xmlrpc.pingUpdateFailed.help', {url: 'http://support.ghost.org'})
+            help: i18n.t('errors.data.xml.xmlrpc.pingUpdateFailed.help', {url: 'http://docs.ghost.org'})
         }));
     });
 
     req.end();
 }
 
-function ping(post) {
-    var message;
+function ping(post, options) {
+    options = options || {};
+
+    var message, reqOptions;
+
+    // CASE: do not ping slack if we import a database
+    if (options.importing) {
+        return Promise.resolve();
+    }
 
     // If this is a post, we want to send the link of the post
     if (schema.isPost(post)) {
@@ -56,6 +62,15 @@ function ping(post) {
 
     return getSlackSettings().then(function (slackSettings) {
         // Quit here if slack integration is not activated
+        var defaultPostSlugs = [
+            'welcome',
+            'the-editor',
+            'using-tags',
+            'managing-users',
+            'private-sites',
+            'advanced-markdown',
+            'themes'
+        ];
 
         if (slackSettings.url && slackSettings.url !== '') {
             // Only ping when not a page
@@ -63,11 +78,11 @@ function ping(post) {
                 return;
             }
 
-            // Don't ping for the welcome to ghost post.
+            // Don't ping for the default posts.
             // This also handles the case where during ghost's first run
             // models.init() inserts this post but permissions.init() hasn't
             // (can't) run yet.
-            if (post.slug === 'welcome-to-ghost') {
+            if (defaultPostSlugs.indexOf(post.slug) > -1) {
                 return;
             }
 
@@ -79,20 +94,20 @@ function ping(post) {
             };
 
             // fill the options for https request
-            options = url.parse(slackSettings.url);
-            options.method = 'POST';
-            options.headers = {'Content-type': 'application/json'};
+            reqOptions = url.parse(slackSettings.url);
+            reqOptions.method = 'POST';
+            reqOptions.headers = {'Content-type': 'application/json'};
 
             // with all the data we have, we're doing the request now
-            makeRequest(options, slackData);
+            makeRequest(reqOptions, slackData);
         } else {
             return;
         }
     });
 }
 
-function listener(model) {
-    ping(model.toJSON());
+function listener(model, options) {
+    ping(model.toJSON(), options);
 }
 
 function testPing() {

@@ -106,7 +106,8 @@
             },
             "themehandler": {
                 "missingTheme": "The currently active theme \"{theme}\" is missing.",
-                "invalidTheme": "The currently active theme \"{theme}\" is invalid."
+                "invalidTheme": "The currently active theme \"{theme}\" is invalid.",
+                "themeHasErrors": "The currently active theme \"{theme}\" has errors, but will still work."
             }
         },
         "utils": {
@@ -243,6 +244,7 @@
                 "tokenLocked": "Token locked",
                 "invalidToken": "Invalid token",
                 "userNotFound": "User not found",
+                "ownerNotFound": "Owner not found",
                 "onlyOwnerCanTransferOwnerRole": "Only owners are able to transfer the owner role.",
                 "onlyAdmCanBeAssignedOwnerRole": "Only administrators can be assigned the owner role."
             },
@@ -537,14 +539,14 @@
         "httpServer": {
             "cantTouchThis": "Can't touch this",
             "ghostIsRunning": "Ghost is running...",
-            "yourBlogIsAvailableOn": "\nYour blog is now available on {url}",
-            "ctrlCToShutDown": "\nCtrl+C to shut down",
+            "yourBlogIsAvailableOn": "Your blog is now available on {url}",
+            "ctrlCToShutDown": "Ctrl+C to shut down",
             "ghostIsRunningIn": "Ghost is running in {env}...",
-            "listeningOn": "\nListening on",
-            "urlConfiguredAs": "\nUrl configured as: {url}",
-            "ghostHasShutdown": "\nGhost has shut down",
-            "yourBlogIsNowOffline": "\nYour blog is now offline",
-            "ghostWasRunningFor": "\nGhost was running for",
+            "listeningOn": "Listening on: {host}:{port}",
+            "urlConfiguredAs": "Url configured as: {url}",
+            "ghostHasShutdown": "Ghost has shut down",
+            "yourBlogIsNowOffline": "Your blog is now offline",
+            "ghostWasRunningFor": "Ghost was running for",
             "ghostIsClosingConnections": "Ghost is closing connections"
         },
         "mail": {
@@ -569,7 +571,7 @@
             "validation": {
                 "index": {
                     "valueCannotBeBlank": "Value in [{tableName}.{columnKey}] cannot be blank.",
-                    "valueMustBeBoolean": "Value in [settings.key] must be one of true, false, 0 or 1.",
+                    "valueMustBeBoolean": "Value in [{tableName}.{columnKey}] must be one of true, false, 0 or 1.",
                     "valueExceedsMaxLength": "Value in [{tableName}.{columnKey}] exceeds maximum length of {maxlength} characters.",
                     "valueIsNotInteger": "Value in [{tableName}.{columnKey}] is not an integer.",
                     "themeCannotBeActivated": "{themeName} cannot be activated because it is not currently installed.",
